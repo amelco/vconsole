@@ -3,8 +3,6 @@ use crate::ram::Ram;
 pub struct Cpu {
     pub init_address: u16,
     pub reg_a: u8,
-    reg_x: u8,
-    reg_y: u8,
     pc: u16,
     stack: Vec<u16>,
 }
@@ -14,8 +12,6 @@ impl Cpu {
         Cpu { 
             init_address: 0x3940,
             reg_a: 0,
-            reg_x: 0,
-            reg_y: 0,
             pc: 0x3940,
             stack: vec![0; 64],
         }
@@ -25,30 +21,11 @@ impl Cpu {
         let opcode = ram.read(self.pc);
         self.pc += 1;
         match opcode {
-            0xaa => {
-                // lda absolute mode
-                self.reg_a = ram.read(self.pc);
-            }
-            0xba => {
-                // sta
-                let addr = self.read_addr(ram);
-                ram.write(addr, self.reg_a);
-            }
-            0xca => {
-                // jump
-                let addr = self.read_addr(ram);
-                self.stack.push(self.pc + 1);
-                self.pc = addr - 1;
-            }
-            0xcf => {
-                // rts
-                let addr = self.stack.pop().unwrap();
-                self.pc = addr - 1;
-            }
-            0xff => {
-                // shutdown
-                panic!("SAIU");
-            }
+            0xaa => self.lda(ram),
+            0xba => self.sta(ram),
+            0xca => self.jmp(ram),
+            0xcf => self.rts(ram),
+            0xff => panic!("SAIU"),
             _ => return
         }
         self.pc += 1;
@@ -67,4 +44,28 @@ impl Cpu {
         let addr : u16= (hb as u16) << 8 | lb as u16;
         addr
     }
+
+
+    // ==== opcodes code ==================================
+
+    fn lda(&mut self, ram: &mut Ram) {
+        self.reg_a = ram.read(self.pc);
+    }
+
+    fn sta(&mut self, ram: &mut Ram) {
+        let addr = self.read_addr(ram);
+        ram.write(addr, self.reg_a);
+    }
+
+    fn jmp(&mut self, ram: &mut Ram) {
+        let addr = self.read_addr(ram);
+        self.stack.push(self.pc + 1);
+        self.pc = addr - 1;
+    }
+
+    fn rts(&mut self, _ram: &mut Ram) {
+        let addr = self.stack.pop().unwrap();
+        self.pc = addr - 1;
+    }
+
 }

@@ -29,6 +29,7 @@ fn main() {
 
     ram.print(8, 0x3940, 0x39ff);
     loop {
+        println!("");
         cpu.execute(&mut ram);
         cpu.print();
         ram.print(8, 0x3940, 0x39ff);

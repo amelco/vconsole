@@ -28,7 +28,9 @@ impl Ram {
     pub fn print(&self, num_columns: u8, begin: usize, end: usize) {
         for i in 0..end-begin+1 {
             if i % (num_columns as usize * 2) == 0 {
-                println!("");
+                if i > 0 {
+                    println!("");
+                }
                 print!("[{:#04X}] ", i+begin)
             }
             if i % 2 as usize == 0 {
@@ -36,5 +38,26 @@ impl Ram {
             }
             print!("{:02X}", self.data[i+begin])
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn read_ok() {
+        let ram = Ram::new();
+        let data = ram.read(0x1010);
+
+        assert_eq!(data, 0xff);
+    }
+
+    fn write_ok() {
+        let mut ram = Ram::new();
+        ram.write(0x3590, 0xfe);
+        let value = ram.read(0x3590);
+
+        assert_eq!(0xfe, value);
     }
 }
