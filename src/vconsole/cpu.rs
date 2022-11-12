@@ -1,4 +1,5 @@
-use crate::ram::Ram;
+use super::ram::Ram;
+
 
 pub struct Cpu {
     pub init_address: u16,
