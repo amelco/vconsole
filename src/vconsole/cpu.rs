@@ -38,6 +38,10 @@ impl Cpu {
         println!("A:      {:02x}",  self.reg_a);
     }
 
+    pub fn show(&self) -> String {
+        format!("PC:     {:#04x}\nA:      {:02x}\n", self.pc, self.reg_a)
+    }
+
     fn read_addr(&mut self, ram: &mut Ram) -> u16 {
         let hb = ram.read(self.pc);
         self.pc += 1;

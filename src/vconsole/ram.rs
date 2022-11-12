@@ -25,6 +25,25 @@ impl Ram {
         self.data[addr as usize] = value;
     }
 
+    pub fn load_cartridge(&mut self) {
+        self.data[0x3940] = 0xAA;
+        self.data[0x3941] = 0x21;
+        self.data[0x3942] = 0xBA;
+        self.data[0x3943] = 0x39;
+        self.data[0x3944] = 0x50;
+        self.data[0x3945] = 0xCA;
+        self.data[0x3946] = 0x39;
+        self.data[0x3947] = 0x60;
+    
+        self.data[0x3960] = 0xAA;
+        self.data[0x3961] = 0xDE;
+        self.data[0x3962] = 0xCF;
+    
+        self.data[0x3948] = 0xBA;
+        self.data[0x3949] = 0x39;
+        self.data[0x394A] = 0x50;
+    }
+
     pub fn print(&self, num_columns: u8, begin: usize, end: usize) {
         for i in 0..end-begin+1 {
             if i % (num_columns as usize * 2) == 0 {
